@@ -1,0 +1,23 @@
+const fs=require('fs');
+const base='C:/Users/USER/Desktop/kay/daily-balance/dist/';
+let js=fs.readFileSync(base+'app.js','utf8');
+// Preserve legacy validation; missing fat is a supported old record.
+js=js.replaceAll("['cal','protein','carbs']","['cal','protein','carbs','fat']");
+js=js.replace("saved.goals&&['cal','protein','carbs','fat'].every", "saved.goals&&['cal','protein','carbs'].every");
+js=js.replace("t[k]+=m[k]*m.servings", "t[k]+=(Number.isFinite(m[k])?m[k]:0)*m.servings");
+js=js.replace('{cal:0,protein:0,carbs:0}', '{cal:0,protein:0,carbs:0,fat:0}');
+js=js.replace("function render(){", "function missingFat(){return state.meals.filter(m=>m.date===$('date').value&&!Number.isFinite(m.fat)).length;}\nfunction render(){");
+js=js.replace("$('goal-label').textContent", "$('fat-note').hidden=!missingFat();$('fat-note').textContent=`脂肪為已填寫小計，另有 ${missingFat()} 筆餐點待補。`;$('goal-label').textContent");
+js=js.replace("['protein','carbs'])", "['protein','carbs','fat'])");
+js=js.replace("textContent=g?`/ ${g[k]} g`:'g'", "textContent=Number.isFinite(g?.[k])?`/ ${g[k]} g`:(g&&k==='fat'?'g · 目標待補':'g')");
+js=js.replace('碳水 ${round(m.carbs*m.servings)} g`','碳水 ${round(m.carbs*m.servings)} g · 脂肪 ${Number.isFinite(m.fat)?round(m.fat*m.servings)+\' g\':\'待補\'}`');
+js=js.replace('碳水 ${f[4]} g`','碳水 ${f[4]} g · 脂肪 ${f[5]} g`');
+js=js.replace("const round=n=>", "const sampleFats=[3.6,.3,4.8,.2,4.5,5,.4,2.8,.4];foods.forEach((food,i)=>food.push(sampleFats[i]));\nconst round=n=>");
+js=js.replace('碳水 ${round(t.carbs)} / ${g.carbs} g。', '碳水 ${round(t.carbs)} / ${g.carbs} g，脂肪 ${round(t.fat)}${missingFat()?\'（已填小計）\':\'\'} / ${g.fat??\'目標待補\'} g。');
+fs.writeFileSync(base+'app.js',js);
+let html=fs.readFileSync(base+'index.html','utf8');
+html=html.replace('<small id="carbs-goal">g</small></p></div></div></article>','<small id="carbs-goal">g</small></p></div><div><span><i class="dot blue"></i>脂肪</span><p><b id="fat">0</b> <small id="fat-goal">g</small></p></div></div><p id="fat-note" hidden></p></article>');
+html=html.replace('<input id="meal-carbs" required type="number" min="0" max="1000" step="0.1"></label>', '<input id="meal-carbs" required type="number" min="0" max="1000" step="0.1"></label><label>脂肪 g<input id="meal-fat" required type="number" min="0" max="1000" step="0.1"></label>');
+html=html.replace('<input id="target-carbs" type="number" min="1" max="1000" required></label>','<input id="target-carbs" type="number" min="1" max="1000" required></label><label>脂肪 g<input id="target-fat" type="number" min="1" max="1000" required></label>');
+fs.writeFileSync(base+'index.html',html);
+fs.appendFileSync(base+'style.css','\n.macros{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.macros>div+div{padding-left:10px}.macros small{display:block;margin-top:5px}.blue{background:#85a5a6}.fields{grid-template-columns:repeat(2,minmax(0,1fr))}.meal-row small{line-height:1.7}#fat-note{margin-bottom:0;color:#856842}\n');
