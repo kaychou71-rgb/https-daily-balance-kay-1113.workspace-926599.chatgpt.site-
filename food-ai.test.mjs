@@ -1,0 +1,14 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {handleFoodAI,validateResult} from './food-ai.mjs';
+const origin='https://example.test';
+const env={FOOD_AI_ENABLED:'true',FOOD_AI_FREE_ONLY_VERIFIED:'true',OPENAI_API_KEY:'test-only-never-real',FOOD_AI_MODEL:'test-model'};
+function req(body={consent:true,image:'data:image/jpeg;base64,/9j/YWJj'},headers={}){return new Request(origin+'/api/food-ai',{method:'POST',headers:{origin,'content-type':'application/json','oai-authenticated-user-id':'test-user',...headers},body:JSON.stringify(body)});}
+const result={notice:'份量為估計。',items:[{name:'雞蛋',portion:'1 顆',cal:72,protein:6.3,carbs:.4,fat:4.8,confidence:'medium'}]};
+test('disabled service never calls provider',async()=>{let calls=0;const response=await handleFoodAI(req(),{},async()=>{calls++;});assert.equal(response.status,503);assert.equal(calls,0);});
+test('must verify free-only use independently of API key',async()=>{let calls=0;const response=await handleFoodAI(req(),{...env,FOOD_AI_FREE_ONLY_VERIFIED:'false'},async()=>{calls++;});assert.equal(response.status,503);assert.equal(calls,0);});
+test('reject missing identity, foreign origin and absent consent before provider',async()=>{let calls=0;const provider=async()=>{calls++;};assert.equal((await handleFoodAI(req({}, {'oai-authenticated-user-id':''}),env,provider)).status,401);assert.equal((await handleFoodAI(req(undefined,{origin:'https://other.test'}),env,provider)).status,403);assert.equal((await handleFoodAI(req({image:'data:image/jpeg;base64,/9j/YWJj',consent:false}),env,provider)).status,400);assert.equal(calls,0);});
+test('mock provider response returns only valid per-food estimates',async()=>{const response=await handleFoodAI(req(),env,async(url,options)=>{assert.equal(url,'https://api.openai.com/v1/responses');const body=JSON.parse(options.body);assert.equal(body.store,false);assert.equal(body.text.format.strict,true);return Response.json({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify(result)}]}]});});assert.deepEqual(await response.json(),result);});
+test('quota exhaustion stops without automatic retry',async()=>{let calls=0;const response=await handleFoodAI(req(),env,async()=>{calls++;return Response.json({}, {status:429});});assert.equal(response.status,429);assert.equal(calls,1);});
+test('reject malformed or negative nutrition',()=>{assert.throws(()=>validateResult({...result,items:[{...result.items[0],fat:-1}]}));assert.throws(()=>validateResult({notice:'x',items:Array(21).fill(result.items[0])}));});
+test('non-food response is an empty result, not invented food',async()=>{const response=await handleFoodAI(req(),env,async()=>Response.json({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify({notice:'沒有可辨識的食物。',items:[]})}]}]}));assert.deepEqual((await response.json()).items,[]);});

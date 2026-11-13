@@ -1,0 +1,41 @@
+#!/usr/bin/env pwsh
+$basedir=Split-Path $MyInvocation.MyCommand.Definition -Parent
+
+$exe=""
+$pathsep=":"
+$env_node_path=$env:NODE_PATH
+$new_node_path="C:\Users\USER\Desktop\kay\daily-balance-ios\node_modules\.pnpm\expo@58.0.25_@babel+core@7._6ad24dcc694dfc32599b3f1cf4f40ee4\node_modules\expo\node_modules;C:\Users\USER\Desktop\kay\daily-balance-ios\node_modules\.pnpm\expo@58.0.25_@babel+core@7._6ad24dcc694dfc32599b3f1cf4f40ee4\node_modules;C:\Users\USER\Desktop\kay\daily-balance-ios\node_modules\.pnpm\node_modules"
+if ($PSVersionTable.PSVersion -lt "6.0" -or $IsWindows) {
+  # Fix case when both the Windows and Linux builds of Node
+  # are installed in the same directory
+  $exe=".exe"
+  $pathsep=";"
+} else {
+  $new_node_path="/mnt/c/Users/USER/Desktop/kay/daily-balance-ios/node_modules/.pnpm/expo@58.0.25_@babel+core@7._6ad24dcc694dfc32599b3f1cf4f40ee4/node_modules/expo/node_modules:/mnt/c/Users/USER/Desktop/kay/daily-balance-ios/node_modules/.pnpm/expo@58.0.25_@babel+core@7._6ad24dcc694dfc32599b3f1cf4f40ee4/node_modules:/mnt/c/Users/USER/Desktop/kay/daily-balance-ios/node_modules/.pnpm/node_modules"
+}
+if ([string]::IsNullOrEmpty($env_node_path)) {
+  $env:NODE_PATH=$new_node_path
+} else {
+  $env:NODE_PATH="$new_node_path$pathsep$env_node_path"
+}
+
+$ret=0
+if (Test-Path "$basedir/node$exe") {
+  # Support pipeline input
+  if ($MyInvocation.ExpectingInput) {
+    $input | & "$basedir/node$exe"  "$basedir/../.pnpm/expo@58.0.25_@babel+core@7._6ad24dcc694dfc32599b3f1cf4f40ee4/node_modules/expo/bin/modules" $args
+  } else {
+    & "$basedir/node$exe"  "$basedir/../.pnpm/expo@58.0.25_@babel+core@7._6ad24dcc694dfc32599b3f1cf4f40ee4/node_modules/expo/bin/modules" $args
+  }
+  $ret=$LASTEXITCODE
+} else {
+  # Support pipeline input
+  if ($MyInvocation.ExpectingInput) {
+    $input | & "node$exe"  "$basedir/../.pnpm/expo@58.0.25_@babel+core@7._6ad24dcc694dfc32599b3f1cf4f40ee4/node_modules/expo/bin/modules" $args
+  } else {
+    & "node$exe"  "$basedir/../.pnpm/expo@58.0.25_@babel+core@7._6ad24dcc694dfc32599b3f1cf4f40ee4/node_modules/expo/bin/modules" $args
+  }
+  $ret=$LASTEXITCODE
+}
+$env:NODE_PATH=$env_node_path
+exit $ret

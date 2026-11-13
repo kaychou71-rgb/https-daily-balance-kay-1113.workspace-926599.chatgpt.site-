@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "日常・飲食日記",
+    "slug": "daily-balance-kay",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.kay.dailybalance",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "選擇餐點照片，保存在你的飲食日記中。",
+          "cameraPermission": "拍攝餐點照片，保存在你的飲食日記中。",
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
