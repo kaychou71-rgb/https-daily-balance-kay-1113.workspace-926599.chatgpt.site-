@@ -1,0 +1,20 @@
+✔ legacy JSON and versioned backup preserve optional fat and extra fields (8.3398ms)
+✔ reimport is idempotent and does not mutate either input (0.7751ms)
+✔ same ID conflict preserves existing meal and goals (1.8052ms)
+✔ invalid file is rejected completely (1.0292ms)
+✔ CSV has BOM, CRLF, quoted Chinese/comma/newline and formula protection (0.6538ms)
+✔ disabled service never calls provider (33.8237ms)
+✔ must verify free-only use independently of API key (0.641ms)
+✔ reject missing identity, foreign origin and absent consent before provider (2.6875ms)
+✔ mock provider response returns only valid per-food estimates (2.9074ms)
+✔ quota exhaustion stops without automatic retry (0.9288ms)
+✔ reject malformed or negative nutrition (0.5015ms)
+✔ non-food response is an empty result, not invented food (1.1066ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 494.6582

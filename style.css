@@ -12,3 +12,6 @@
 :root{color-scheme:light;accent-color:#0369a1}
 button:focus-visible,a:focus-visible{outline:2px solid #0284c7;outline-offset:3px}
 .primary:hover:not(:disabled){background:#075985}
+
+
+.backup-panel{margin-top:24px;padding:20px;background:#dff3ff;border:1px solid #b9e2f8;border-radius:20px}.backup-panel h2{font-size:18px}.backup-actions{display:flex;flex-wrap:wrap;gap:10px}.backup-actions button{flex:1;min-width:130px;background:#fff;border:1px solid #63b3dc;border-radius:12px;padding:10px;font-size:13px}.backup-panel input[type=file]{max-width:100%;font-size:14px}#backup-status{overflow-wrap:anywhere}main{padding-top:calc(28px + env(safe-area-inset-top))}

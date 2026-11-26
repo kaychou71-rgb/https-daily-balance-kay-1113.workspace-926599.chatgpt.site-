@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "日常 · Daily Balance 飲食日記",
+  "short_name": "日常飲食",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f0f9ff",
+  "theme_color": "#f0f9ff",
+  "icons": [
+    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"icons/icon-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+  ]
+}

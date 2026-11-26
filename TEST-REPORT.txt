@@ -1,0 +1,46 @@
+Daily Balance 實際測試報告
+測試日期：2026-11-26（台灣）
+原始碼基準：main 3932f3d4669622e450154eee4af1aacf0083d612
+
+資料與既有 AI 單元測試
+執行：node --test daily-balance/data-tools.test.cjs daily-balance/food-ai.test.mjs
+結果：12 passed / 0 failed。原始輸出見 unit-test-results.txt。
+其中 5 項新測試驗證：舊格式與版本化備份完整往返、重複匯入不新增、不改寫相同 ID 衝突與既有目標、無效資料全拒絕、CSV BOM/CRLF/中文/引號/換行/公式前綴防護。
+另 7 項為原有 food-ai 測試，全部通過，使用模擬服務，沒有實際呼叫付費 AI。
+
+離線與 PWA 瀏覽器測試
+執行環境：Windows、Node v24.22.3、Playwright 搭配系統 Brave（Chromium 引擎），390×844 觸控行動版視窗。
+執行方式（PowerShell，本機既有工具位置）：
+$env:NODE_PATH='C:/Program Files/WindowsApps/OpenAI.CodexPrimaryRuntime.v26-1123-915-0_26.1123.915.0_x64__3k8sg7r9htsxt/dependencies/node/node_modules'
+$env:BROWSER_PATH='C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
+node daily-balance/browser.test.cjs
+結果：11 passed / 0 failed；沒有捕捉到頁面 JavaScript 錯誤。原始輸出見 browser-test-results.txt。
+測試腳本使用臨時本機連接埠與獨立瀏覽器資料環境，不接觸使用者正式日記。
+1. 載入舊紀錄與目標不改寫；舊餐點未填脂肪，編輯後仍保留未知。
+2. /diary/ 子路徑 manifest 與全部圖示可載入、PNG 尺寸正確、天藍色背景、無水平溢出。
+3. 模擬斷網後重新載入，離線食物搜尋、新增餐點、再載入保留；AI 按鈕停用。
+4. 斷網仍可實際下載 JSON 與 CSV，JSON 含餐點與目標，CSV 檔頭為 UTF-8 BOM 且含中文。
+5. 匯入預覽前不寫入；確認新增後再次匯入不新增重複紀錄。
+6. 無效 JSON 不寫入；同 ID 不同內容保留原值。
+7. 空白 localStorage 在離線狀態匯入 JSON 後，餐點及目標與備份完全相等。
+8. 模擬容量不足時 save 回傳失敗且狀態不變；另一分頁改動後拒絕舊分頁覆寫。
+9. 實際修改測試 Service Worker 版本並觸發更新：編輯中的欄位不被重載；關閉視窗後新版本啟用、舊快取清除、localStorage 保留。測試後復原原 sw.js。
+10. 異常 localStorage 原文保留且寫入阻擋。
+11. 根路徑 / 也能安裝 Service Worker 並斷網重新開啟。
+mobile-preview.png 為本次瀏覽器截圖，已人工檢視維持天藍色與備份面板排版。
+
+尚未驗證
+未使用實體 iPhone，也未執行 Safari/WebKit；行動版 Chromium 視窗不能當成 iPhone 相容性已通過。
+未驗證 iPhone 加入主畫面、實際圖示裁切、分享/檔案下載/檔案挑選、鍵盤安全區、裝置重啟或 App 長期關閉後的離線開啟。
+未在 Excel 實際開啟 CSV；目前為內容與編碼測試。
+未部署，因此沒有驗證正式主機 HTTPS、MIME、CDN、快取標頭與舊版升級到正式網址。
+未讀取使用者真實紀錄；保留測試使用依目前程式格式建立的資料。
+未實測作業系統儲存回收、清除網站資料或裝置容量壓力；PWA 與本機備份都不能代替存到瀏覽器外的 JSON。
+
+修改清單與審核
+修改：app.js、index.html、style.css。
+新增產品檔：data-tools.js、pwa.js、sw.js、manifest.webmanifest、icons/ 下四個 PNG。
+新增驗證與交付檔：data-tools.test.cjs、browser.test.cjs、serve.cjs、make-icons.ps1、README-PWA.txt、報告與測試輸出。
+catalog.js、mixer.js、photo-ai.js、ai-status.json、food-ai.mjs、food-ai.test.mjs 來自指定基準，未修改，隨附以便獨立執行。
+完整修改內容.html 列出所有變更程式完整內容及 PNG；complete-changes.patch 提供可套用文字與二進位差異。
+尚未提交 GitHub、開 PR 或部署；待使用者審閱並明確同意。

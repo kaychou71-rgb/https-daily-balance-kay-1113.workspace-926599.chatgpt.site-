@@ -1,0 +1,12 @@
+PASS old storage survives load; missing fat stays unknown
+PASS manifest and all icons work below /diary/; sky-blue mobile layout fits
+PASS offline reload, search, save and reload persist meals
+PASS offline JSON/CSV downloads contain records and UTF-8 BOM
+PASS restore preview, confirm and repeated import are safe offline
+PASS invalid JSON makes zero writes; conflicts preserve original
+PASS JSON backup restores meals and goals into empty storage offline
+PASS quota failure and stale tab cannot claim a successful save
+PASS update waits with form open, then activates after windows close; records survive
+PASS corrupt existing storage is preserved and writes blocked
+PASS root path installation and offline opening also work
+Completed 11 browser checks; zero page errors.
