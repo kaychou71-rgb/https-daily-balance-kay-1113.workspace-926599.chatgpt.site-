@@ -1,0 +1,34 @@
+Daily Balance 手機圖示：星空 3:8
+日期：2026-11-26
+狀態：本機待審閱，尚未提交或部署本次圖示修改。
+
+使用者指定圖片
+使用原圖縮製圖示，沒有重畫、改字或裁切原圖；1254×1254 來源副本與原檔 SHA-256 相同。
+來源副本：icons/source-38.png。
+
+輸出
+icons/apple-touch-icon-38.png：180×180，供 iPhone 主畫面使用。
+icons/icon-38-192.png：192×192，供 Web App Manifest 使用。
+icons/icon-38-512.png：512×512，供 Web App Manifest 使用。
+icons/icon-38-maskable-512.png：512×512，圖像縮至中央 84%，保留遮罩安全範圍；iPhone 使用上方 180px 完整版。
+圖示背景不透明；不預先裁圓角，由手機處理顯示外形。
+
+文字檔修改
+index.html：Apple touch icon 與 favicon 指向新檔名。
+manifest.webmanifest：三種安裝圖示改用新圖。
+sw.js：離線快取清單改用新圖，版本更新為 2026-11-26-4。
+recover.html：恢復頁核對新版離線版本 2026-11-26-4。
+make-icons.ps1：從使用者原圖產生四種尺寸，可重跑。
+未修改飲食紀錄、資料格式或天藍色介面。
+
+驗證
+圖檔尺寸與 PNG 格式正確；原始圖片複製一致。
+已目視檢查 iPhone 180px 圖示及 maskable 圖示，3:8 清楚可見。
+瀏覽器與恢復功能結果見 icon-browser-test-results.txt、icon-recovery-test-results.txt。
+未在 iPhone 實機驗證既有主畫面圖示刷新；已安裝的圖示可能需重新加入主畫面才能更新。
+部署後請先在目前日記匯出 JSON 備份並確認紀錄，保留原圖示，再檢查新加入圖示的資料情況。
+不要直接刪除原 App 或清除 Safari 資料來更新圖示。
+
+審閱
+完整修改差異：星空圖示完整修改.patch。
+完整文字檔與圖示：星空圖示完整修改.html。

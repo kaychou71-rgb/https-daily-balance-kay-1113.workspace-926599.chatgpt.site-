@@ -1,0 +1,6 @@
+PASS reproduced old Service Worker redirect navigation failure
+PASS failed recovery does not claim success or change records
+PASS recovery page replaces broken worker without deleting records; canonical redirects cached safely; offline reload succeeds
+PASS rejects login redirect without caching login HTML or changing records
+PASS rejects asset-login redirect without caching login HTML or changing records
+Completed 5 redirect/recovery checks.

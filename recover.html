@@ -28,7 +28,7 @@ document.getElementById('repair').onclick=async()=>{
    const versionTimer=setTimeout(()=>{channel.port1.close();reject(Error('未能確認新版已啟用，請確認已登入並保持連線後重試。'));},4000);
    channel.port1.onmessage=event=>{
     clearTimeout(versionTimer);channel.port1.close();
-    if(event.data?.version==='2026-11-26-3')resolve();else reject(Error('新版尚未啟用，請稍後重試。'));
+    if(event.data?.version==='2026-11-26-4')resolve();else reject(Error('新版尚未啟用，請稍後重試。'));
    };
    reg.active.postMessage({type:'CHECK_OFFLINE_VERSION'},[channel.port2]);
   });
