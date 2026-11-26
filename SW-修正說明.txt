@@ -1,0 +1,62 @@
+Daily Balance 手機重新導向錯誤修正
+日期：2026-11-26
+正式版本基準：GitHub 9062e0daf951cfae2e95d228eea01b65a4bcad2f。
+狀態：本機已修正與測試，尚未提交 GitHub 或部署本次變更。
+
+使用者回報
+RESPONSE SERVED BY SERVICE WORKER HAS REDIRECTIONS
+
+原因與重現
+舊版使用 Cache.addAll，抓取的頁面若經過重新導向，存入 Cache Storage 後仍帶有 redirected 狀態。
+舊版再把這份回應直接交給頁面導航，瀏覽器會拒絕。
+本機以 index.html 302 到根目錄的主機行為重現：舊 Worker 的快取 redirected=true，頁面重新載入失敗。
+正式網站未登入時回應 401；本次不變更網站帳號與權限。
+尚未直接確認正式主機在登入後是哪一個重新導向造成快取，也未直接操作 iPhone 實機。
+
+修正內容
+1. sw.js 版本由 2026-11-26-2 更新為 2026-11-26-3。
+2. 快取前確認最終網址、HTTP 狀態、內容類型，HTML 必須包含日記特有元素。
+3. 合法的同來源首頁／index.html 重新導向回應會重建為全新 Response，再儲存快取，移除導航不允許的重新導向歷程。
+4. 登入頁、意外路徑、錯誤內容類型不會被當成日記快取；所有回應通過檢查後才建立新版快取。
+5. 新增 recover.html。此路徑不會被舊 Worker 的首頁攔截，可作為恢復入口。
+6. 使用者按「更新離線功能」後才請求新版立即啟用，不自動重新載入其他編輯視窗。
+7. 恢復頁會核對啟用版本；沒有確認新版時不宣稱成功。
+8. 不清除 localStorage、不取消註冊、不刪除瀏覽器紀錄、不變更餐點格式。
+
+實際測試
+環境：Windows、Playwright、Brave/Chromium；以人工測試餐點驗證。
+5 項重新導向與恢復測試全部通過：
+- 舊版可重現導航失敗。
+- 恢復失敗不誤報成功、不改寫餐點。
+- 恢復成功後新版接管，14 個快取回應均不帶 redirected 狀態，離線重開成功，舊餐點完全保留。
+- 首頁被導向登入頁時拒絕安裝，沒有快取登入 HTML。
+- CSS 被導向登入頁時拒絕安裝，沒有誤快取。
+輸出見 redirect-test-results.txt。
+同一修正核心亦已通過原本 11 項瀏覽器檢查與 12 項資料／既有 AI 測試。
+
+重跑方式
+需要 Node.js、Playwright 與可用的 Chromium 瀏覽器。
+node redirect.test.cjs
+node browser.test.cjs
+node --test data-tools.test.cjs food-ai.test.mjs
+如需指定瀏覽器，設定 BROWSER_PATH；本機使用系統已提供的 Playwright 套件。
+
+修改檔案
+修改 sw.js；新增 recover.html、redirect.test.cjs、fixtures/sw-before-redirect.js（舊版測試樣本）、本報告與測試輸出。
+正式網站只需更新 sw.js 與新增 recover.html；測試樣本不放入正式網站目錄。
+完整內容見「手機開啟修正完整內容.html」；差異見「手機開啟修正.patch」。
+
+部署後的恢復方式（目前尚未部署此頁）
+保持網路連線，在原本有紀錄的瀏覽器環境開啟原網站的 /recover.html。
+按「更新離線功能」，成功後按「返回飲食日記」。
+若使用主畫面 App，請先保留圖示，完成更新後關閉重開並確認紀錄。
+Safari 與主畫面 App 可能使用不同儲存環境，實機能否透過恢復頁處理主畫面環境仍需驗證。
+不要清除 Safari 網站資料或刪除主畫面 App。
+
+未驗證
+iPhone 13 mini 的實機恢復、登入流程與主畫面環境更新仍待驗證。
+本次尚未部署，因此正式網址的實際重新導向及恢復頁尚未實測。
+
+參考
+https://developer.mozilla.org/en-US/docs/Web/API/Response/redirected
+https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent/respondWith
