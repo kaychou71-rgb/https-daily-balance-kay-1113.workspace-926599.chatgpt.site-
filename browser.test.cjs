@@ -74,7 +74,7 @@ async function check(name,fn){await fn();results.push('PASS '+name);console.log(
       await page.locator('#add').click();await page.locator('#meal-name').fill('尚未儲存');
       const swPath=path.join(__dirname,'sw.js'),source=fs.readFileSync(swPath,'utf8');
       try{
-        fs.writeFileSync(swPath,source.replace("2026-11-26-1","2026-11-26-test"));
+        fs.writeFileSync(swPath,source.replace(/const RELEASE='[^']+'/,"const RELEASE='2026-11-26-test'"));
         await page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();await r.update();});
         await page.waitForFunction(async()=>!!(await navigator.serviceWorker.getRegistration()).waiting);
         assert.equal(await page.locator('#meal-name').inputValue(),'尚未儲存');assert.equal(await page.locator('#editor').evaluate(e=>e.open),true);

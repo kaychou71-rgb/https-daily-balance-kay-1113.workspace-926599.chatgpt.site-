@@ -38,7 +38,9 @@
     return {data:{...current,meals,goals},added,duplicates,conflicts,goalsAdded:current.goals===null&&incoming.goals!==null};
   }
   function csv(data){
-    const cell=v=>'"'+String(v??'').replace(/^[\s\uFEFF]*[=+@-]/,s=>"'"+s).replace(/"/g,'""')+'"';
+    // Excel's legacy import wizard truncates quoted fields containing line breaks.
+    // Keep each record on one physical line; JSON retains the exact original text.
+    const cell=v=>'"'+String(v??'').replace(/\r\n|\r|\n/g,' ⏎ ').replace(/^[\s\uFEFF]*[=+@-]/,s=>"'"+s).replace(/"/g,'""')+'"';
     const rows=[['日期','餐別','餐點名稱','份數','每份熱量(kcal)','每份蛋白質(g)','每份碳水(g)','每份脂肪(g)','總熱量(kcal)','總蛋白質(g)','總碳水(g)','總脂肪(g)','紀錄ID']];
     for(const m of data.meals)rows.push([m.date,m.type,m.name,m.servings,m.cal,m.protein,m.carbs,m.fat,...['cal','protein','carbs','fat'].map(k=>Number.isFinite(m[k])?Math.round(m[k]*m.servings*1000)/1000:''),m.id]);
     return '\uFEFF'+rows.map(r=>r.map(cell).join(',')).join('\r\n')+'\r\n';

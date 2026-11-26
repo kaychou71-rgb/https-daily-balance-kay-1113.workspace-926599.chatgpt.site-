@@ -1,5 +1,5 @@
 /* Bump RELEASE whenever any shell asset changes. No meal data or API caching. */
-const RELEASE='2026-11-26-1';
+const RELEASE='2026-11-26-2';
 const PREFIX='daily-balance-shell-'+encodeURIComponent(self.registration.scope)+'-';
 const CACHE=PREFIX+RELEASE;
 const SHELL=['./','index.html','style.css','catalog.js','mixer.js','app.js','photo-ai.js','data-tools.js','pwa.js','manifest.webmanifest','icons/apple-touch-icon.png','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png'];

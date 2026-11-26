@@ -22,8 +22,9 @@ test('invalid file is rejected completely',()=>{
   for(const value of [null,[],{meals:[],goals:{}},{...legacy,meals:[meal,meal]},...['date','type','id','cal'].map(k=>({...legacy,meals:[{...meal,[k]:k==='id'?'':'invalid'}]})),{...legacy,meals:[{...meal,date:'2026-02-30'}]},{format:'daily-balance-backup',version:2,data:legacy}])assert.throws(()=>D.parse(JSON.stringify(value)));
   assert.throws(()=>D.parse('{'));assert.throws(()=>D.validate({...legacy,meals:[{...meal,cal:Infinity}]}));
 });
-test('CSV has BOM, CRLF, quoted Chinese/comma/newline and formula protection',()=>{
+test('CSV has BOM, CRLF, quoted Chinese/comma, visible newline marker and formula protection',()=>{
   const csv=D.csv({meals:[{...meal,name:'雞肉,"飯"\n便當'},{...meal,id:'b',name:' =HYPERLINK("x")'}],goals:null});
-  assert.ok(csv.startsWith('\uFEFF'));assert.ok(csv.endsWith('\r\n'));assert.ok(csv.includes('"雞肉,""飯""\n便當"'));assert.ok(csv.includes("\"' =HYPERLINK"));
+  assert.ok(csv.startsWith('\uFEFF'));assert.ok(csv.endsWith('\r\n'));assert.ok(csv.includes('"雞肉,""飯"" ⏎ 便當"'));assert.ok(csv.includes("\"' =HYPERLINK"));
+  assert.equal(csv.split('\r\n').length,4);
   assert.ok(csv.includes('"4","","200","30","4","","old-1"'));
 });
