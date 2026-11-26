@@ -1,11 +1,13 @@
-param([string]$SourcePath = (Join-Path $PSScriptRoot 'icons/source-38.png'))
+param([string]$SourcePath = (Join-Path $PSScriptRoot 'icons/source-lightning.jpg'))
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 $iconDir = Join-Path $PSScriptRoot 'icons'
 New-Item -ItemType Directory -Path $iconDir -Force | Out-Null
 $sourceImage = [System.Drawing.Image]::FromFile($SourcePath)
-if ($sourceImage.Width -ne $sourceImage.Height) { $sourceImage.Dispose(); throw '請使用正方形圖示來源圖片。' }
-foreach ($spec in @(@('apple-touch-icon-38.png',180), @('icon-38-192.png',192), @('icon-38-512.png',512), @('icon-38-maskable-512.png',512))) {
+$cropEdge = [Math]::Min($sourceImage.Width,$sourceImage.Height)
+$cropX = [int][Math]::Floor(($sourceImage.Width-$cropEdge)/2)
+$cropY = [int][Math]::Floor(($sourceImage.Height-$cropEdge)/2)
+foreach ($spec in @(@('apple-touch-icon-lightning.png',180), @('icon-lightning-192.png',192), @('icon-lightning-512.png',512), @('icon-lightning-maskable-512.png',512))) {
   $size = [int]$spec[1]
   $bitmap = New-Object System.Drawing.Bitmap($size,$size)
   $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
@@ -19,7 +21,7 @@ foreach ($spec in @(@('apple-touch-icon-38.png',180), @('icon-38-192.png',192), 
   $target = [System.Drawing.Rectangle]::new($offset,$offset,$edge,$edge)
   $attributes = [System.Drawing.Imaging.ImageAttributes]::new()
   $attributes.SetWrapMode([System.Drawing.Drawing2D.WrapMode]::TileFlipXY)
-  $graphics.DrawImage($sourceImage,$target,0,0,$sourceImage.Width,$sourceImage.Height,[System.Drawing.GraphicsUnit]::Pixel,$attributes)
+  $graphics.DrawImage($sourceImage,$target,$cropX,$cropY,$cropEdge,$cropEdge,[System.Drawing.GraphicsUnit]::Pixel,$attributes)
   $bitmap.Save((Join-Path $iconDir $spec[0]),[System.Drawing.Imaging.ImageFormat]::Png)
   $attributes.Dispose(); $graphics.Dispose(); $bitmap.Dispose()
 }

@@ -1,8 +1,8 @@
 /* Bump RELEASE whenever any shell asset changes. No meal data or API caching. */
-const RELEASE='2026-11-26-4';
+const RELEASE='2026-11-26-5';
 const PREFIX='daily-balance-shell-'+encodeURIComponent(self.registration.scope)+'-';
 const CACHE=PREFIX+RELEASE;
-const SHELL=['./','index.html','style.css','catalog.js','mixer.js','app.js','photo-ai.js','data-tools.js','pwa.js','manifest.webmanifest','icons/apple-touch-icon-38.png','icons/icon-38-192.png','icons/icon-38-512.png','icons/icon-38-maskable-512.png'];
+const SHELL=['./','index.html','style.css','catalog.js','mixer.js','app.js','photo-ai.js','data-tools.js','pwa.js','manifest.webmanifest','icons/apple-touch-icon-lightning.png','icons/icon-lightning-192.png','icons/icon-lightning-512.png','icons/icon-lightning-maskable-512.png'];
 const SCOPE=new URL(self.registration.scope);
 function expectedType(path){
   if(path==='./'||path==='index.html')return /text\/html/i;

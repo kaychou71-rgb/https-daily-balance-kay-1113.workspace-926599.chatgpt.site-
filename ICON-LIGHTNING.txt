@@ -1,0 +1,18 @@
+Daily Balance 閃電手機圖示更新
+日期：2026-11-26
+使用者已授權完成後直接提交與更新網站。
+
+最新指定圖片：800×600 閃電照片。
+來源副本：icons/source-lightning.jpg，保留原始 JPG。
+以中央 600×600 範圍裁成正方形，保留閃電主體與下方城市，再縮製手機圖示。
+iPhone：apple-touch-icon-lightning.png，180×180。
+Manifest：icon-lightning-192.png、icon-lightning-512.png。
+Maskable：icon-lightning-maskable-512.png，512×512，圖像內縮以保留遮罩安全區。
+網站頁面、飲食資料格式與使用權限不變。
+
+修改：index.html、manifest.webmanifest、sw.js、recover.html、make-icons.ps1。
+離線版本：2026-11-26-5，恢復頁核對值同步更新。
+圖示使用新的 lightning 檔名，避免沿用先前星空圖示的快取。
+已目視檢查 180px 預覽，閃電主體完整可辨識。
+瀏覽器與恢復測試原始輸出：lightning-browser-results.txt、lightning-recovery-results.txt。
+iPhone 已安裝圖示的自動刷新仍未實機驗證；請先備份 JSON、保留舊圖示，再加入新版。
